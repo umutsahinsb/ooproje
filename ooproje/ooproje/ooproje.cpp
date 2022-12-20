@@ -16,8 +16,10 @@ public:
 		this->y = 0;
 		this->z = 0;
 	}
-	double getPoints() {				//	umut
-		double x, y, z;
+	void getPoints() {					//	umut
+		cout << "x: " << x << endl << "y: " << y << endl << "z: " << z << endl;
+	}
+	double setPoints() {
 		cout << "Enter x, y and z points: ";
 		cin >> x >> y >> z;
 		Point::x = x;
@@ -47,7 +49,13 @@ public:
 		this->points = points;
 		points = new Point[pointNumber];
 	}
+	// inheritance kullandýðýmýz için default constructor hatasý
+	// alýyoruz. bundan kurtulmak için böyle yazýyorum.					// umut
+	PointCloud();
+	void operator+(Point a) {
+	}
 };
+
 
 class Transform :public PointCloud {
 private:
@@ -55,7 +63,9 @@ private:
 	double trans[3];
 	double transMatrix[4][4];
 public:
-	Transform();
+	Transform(double trans[3], double angles[3]) {
+
+	}
 	//set/get functions...
 	void setRotation(double ang[]);
 	void setTranslation(double tr[]);
@@ -83,7 +93,7 @@ public:
 
 class ThreeDGridMap : public PointCloud {  // 3DGridMap þeklinde yazýnca hata veriyordu ThreeD yazdým
 private:
-	bool map[][][]; // burayý yapamadým
+	 // burayý yapamadým
 	float gridSize;
 	int depth;
 public:
@@ -95,3 +105,9 @@ public:
 	bool loadMap(string fileName); // fonk. içindeki fileName'in türü belli deðildi böyle yaptým
 	bool saveMap(string fileName); // bir üstteki fonk. ile ayný durum mevcut
 };
+
+int main() {
+	Point x;
+	x.setPoints();
+	x.getPoints();
+}
