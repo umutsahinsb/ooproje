@@ -29,9 +29,6 @@ public:
 	double setPoints() {
 		cout << "Enter x, y and z points: ";
 		cin >> x >> y >> z;
-		Point::x = x;
-		Point::y = y;
-		Point::z = z;
 		return x, y, z;
 	}
 	/*esit esit == yazimi*/
@@ -55,20 +52,34 @@ public:
 };
 
 class PointCloud :public Point {
+	friend ostream& operator<<(ostream& o, const PointCloud& vect);
+	friend istream& operator>>(istream& in, PointCloud& vect);
 private:
 	Point* points;
 	int pointNumber = 0;
 public:
+
 	PointCloud(int pointNumber) {			//	umut
 		this->points = points;
 		points = new Point[pointNumber];
 	}
 	// inheritance kullandigimiz icin default constructor hatasi
 	// aliyoruz. bundan kurtulmak icin boyle yaziyorum.					// umut
-	PointCloud();
+	PointCloud(){}
 
+	Point* setPointCloud() {
+		points->setPoints();
+		return points;
+	}
+	Point* getPointCloud() {
+		points->getPoints();
+		return points;
+	}
 	void operator+(Point a) {
 		
+	}
+	void operator=(Point a) {
+
 	}
 };
 
@@ -126,11 +137,16 @@ int main() {
 	/*mainde test yaptim set-get-esit esit calisti*/
 	Point x;
 	Point y;
+	PointCloud a(3);
+	PointCloud b(3);
 	x.setPoints();
 	y.setPoints();
 	x.getPoints();
 
 	x == y;
 	cout << endl;
+	/* distance ve PointCloud'in fonksiyonlarinin testleri*/
 	y.distance(x);
+	a.setPointCloud();
+	a.getPointCloud();
 }
