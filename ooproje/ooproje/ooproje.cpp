@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <math.h>
 using namespace std;
 
 ///////						ONEMLI				////////
@@ -44,6 +45,12 @@ public:
 			return 0;
 		}
 	}
+	double distance(const Point& a) const {
+		double dist;
+		dist = sqrt(pow((Point::x - a.x), 2) + pow((Point::y - a.y), 2) + pow((Point::z - a.z), 2));
+		cout << "the distance is: " << dist;
+		return dist;
+	}
 
 };
 
@@ -61,6 +68,7 @@ public:
 	PointCloud();
 
 	void operator+(Point a) {
+		
 	}
 };
 
@@ -123,4 +131,6 @@ int main() {
 	x.getPoints();
 
 	x == y;
+	cout << endl;
+	y.distance(x);
 }
