@@ -4,14 +4,38 @@ using namespace std;
 
 class Point {
 private:
-	double x;
-	double y;
-	double z;
+	double x = 0, y = 0, z = 0;
 public:
-	Point();
-	//set/get functions...
-	double distance(const Point&) const;
-	Point operator == (Point const&);
+	Point() {							//	umut
+		this->x = x;
+		this->y = y;
+		this->z = z;
+	}
+	~Point() {							//	umut
+		this->x = 0;
+		this->y = 0;
+		this->z = 0;
+	}
+	double getPoints() {				//	umut
+		double x, y, z;
+		cout << "Enter x, y and z points: ";
+		cin >> x >> y >> z;
+		Point::x = x;
+		Point::y = y;
+		Point::z = z;
+		return x, y, z;
+	}
+	bool operator==(Point a) {
+		if (Point::x == a.x && Point::y == a.y && Point::z == a.z) {
+			cout << "both points are equal.";
+			return 1;
+		}
+		else {
+			cout << "not equal.";
+			return 0;
+		}
+	}
+
 };
 
 class PointCloud :public Point {
@@ -19,10 +43,10 @@ private:
 	Point* points;
 	int pointNumber;
 public:
-	PointCloud();
-	//set/get functions...
-	PointCloud operator + (PointCloud const&);
-	PointCloud operator = (PointCloud const&);
+	PointCloud(int pointNumber) {			//	umut
+		this->points = points;
+		points = new Point[pointNumber];
+	}
 };
 
 class Transform :public PointCloud {
