@@ -2,6 +2,10 @@
 #include <string>
 using namespace std;
 
+///////						ONEMLI				////////
+/*iplikci nedim gibi yorum yazýn lutfen, turkce harf kullanmayin github bozuyor tsk.*/
+///////						ONEMLI				////////
+
 class Point {
 private:
 	double x = 0, y = 0, z = 0;
@@ -16,9 +20,11 @@ public:
 		this->y = 0;
 		this->z = 0;
 	}
+	/*noktalari ekrana basiyor*/
 	void getPoints() {					//	umut
 		cout << "x: " << x << endl << "y: " << y << endl << "z: " << z << endl;
 	}
+	/*noktalari ayarliyor/degistiriyor*/
 	double setPoints() {
 		cout << "Enter x, y and z points: ";
 		cin >> x >> y >> z;
@@ -27,6 +33,7 @@ public:
 		Point::z = z;
 		return x, y, z;
 	}
+	/*esit esit == yazimi*/
 	bool operator==(Point a) {
 		if (Point::x == a.x && Point::y == a.y && Point::z == a.z) {
 			cout << "both points are equal.";
@@ -43,15 +50,16 @@ public:
 class PointCloud :public Point {
 private:
 	Point* points;
-	int pointNumber;
+	int pointNumber = 0;
 public:
 	PointCloud(int pointNumber) {			//	umut
 		this->points = points;
 		points = new Point[pointNumber];
 	}
-	// inheritance kullandýðýmýz için default constructor hatasý
-	// alýyoruz. bundan kurtulmak için böyle yazýyorum.					// umut
+	// inheritance kullandigimiz icin default constructor hatasi
+	// aliyoruz. bundan kurtulmak icin boyle yaziyorum.					// umut
 	PointCloud();
+
 	void operator+(Point a) {
 	}
 };
@@ -107,7 +115,12 @@ public:
 };
 
 int main() {
+	/*mainde test yaptim set-get-esit esit calisti*/
 	Point x;
+	Point y;
 	x.setPoints();
+	y.setPoints();
 	x.getPoints();
+
+	x == y;
 }
