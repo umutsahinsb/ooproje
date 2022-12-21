@@ -101,12 +101,25 @@ private:
 	double transMatrix[4][4];
 public:
 	Transform(double trans[3], double angles[3]) {
-		;
 		
 	}
 	//set/get functions...
-	void setRotation(double ang[]);
-	void setTranslation(double tr[]);
+	void setRotation(double ang[]) {
+		for (int i = 0; i < 3; i++)
+		{
+			int a;
+			cin >> a;
+			ang[i] = a;
+		}
+	}
+	void setTranslation(double tr[]) {
+		for (int i = 0; i < 3; i++)
+		{
+			int a;
+			cin >> a;
+			tr[i] = a;
+		}
+	}
 	Point doTransform(Point p);
 	PointCloud doTransform(PointCloud pc);
 };
@@ -171,4 +184,25 @@ int main() {
 	b.getPointCloud();
 	c.setPointCloud(3, 4, 5);
 	b + c;
+
+	double ang[3], tr[3];
+	Transform tmp(ang, tr);
+
+	tmp.setRotation(ang);
+	tmp.setTranslation(tr);
+
+	for (int i = 0; i < 3; i++)
+	{
+		cout << ang[i] << " ";
+	}
+
+	cout << endl;
+
+	for (int i = 0; i < 3; i++)
+	{
+		cout << tr[i] << " ";
+	}
+
+
+	return 0;
 }
