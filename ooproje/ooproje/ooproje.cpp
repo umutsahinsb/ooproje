@@ -4,13 +4,12 @@
 using namespace std;
 
 ///////						ONEMLI				////////
-/*iplikci nedim gibi yorum yazýn lutfen, turkce harf kullanmayin github bozuyor tsk.*/
+/*iplikci nedim gibi yorum yazin lutfen, turkce harf kullanmayin github bozuyor tsk.*/
 ///////						ONEMLI				////////
 
 class Point {
-private:
-	double x = 0, y = 0, z = 0;
 public:
+	double x = 0, y = 0, z = 0;
 	Point() {							//	umut
 		this->x = x;
 		this->y = y;
@@ -23,12 +22,13 @@ public:
 	}
 	/*noktalari ekrana basiyor*/
 	void getPoints() {					//	umut
-		cout << "x: " << x << endl << "y: " << y << endl << "z: " << z << endl;
+		cout << "x:" << x << " y:" << y << " z:" << z << endl;
 	}
 	/*noktalari ayarliyor/degistiriyor*/
-	double setPoints() {
-		cout << "Enter x, y and z points: ";
-		cin >> x >> y >> z;
+	double setPoints(double x,double y,double z) {
+		this->x = x;
+		this->y = y;
+		this->z = z;
 		return x, y, z;
 	}
 	/*esit esit == yazimi*/
@@ -67,19 +67,29 @@ public:
 	// aliyoruz. bundan kurtulmak icin boyle yaziyorum.					// umut
 	PointCloud(){}
 
-	Point* setPointCloud() {
-		points->setPoints();
+	Point* setPointCloud(double x,double y,double z) {
+		points->setPoints(x,y,z);
 		return points;
 	}
 	Point* getPointCloud() {
 		points->getPoints();
 		return points;
 	}
-	void operator+(Point a) {
-		
+	PointCloud operator+(PointCloud &a) {
+		PointCloud toplam(3);
+		toplam.points->x = a.points->x + this->points->x;
+		toplam.points->y = a.points->y + this->points->y;
+		toplam.points->z = a.points->z + this->points->z;
+		cout << "\nIki nokta bulutunun toplami:\n";
+		cout << "yeni x: " << toplam.points->x << "\tyeni y: " << toplam.points->y << "\tyeni z: " << toplam.points->z << endl;
+		return toplam;
 	}
-	void operator=(Point a) {
-
+	Point operator=(Point &a) {
+		Point kopya;
+		kopya.x = a.x;
+		kopya.y = a.y;
+		kopya.z = a.z;
+		return kopya;
 	}
 };
 
@@ -135,18 +145,29 @@ public:
 
 int main() {
 	/*mainde test yaptim set-get-esit esit calisti*/
-	Point x;
+	Point u;
 	Point y;
 	PointCloud a(3);
 	PointCloud b(3);
-	x.setPoints();
-	y.setPoints();
-	x.getPoints();
-
-	x == y;
+	PointCloud c(3);
+	PointCloud d(3);
+	u.setPoints(3,4,5);
+	y.setPoints(6,7,8);
+	cout << "x'in setPoint noktalari:\n"; u.getPoints();
+	cout << endl;
+	cout << "y'nin setPoint ile noktalari:\n"; y.getPoints();
+	cout << endl;
+	u == y;
 	cout << endl;
 	/* distance ve PointCloud'in fonksiyonlarinin testleri*/
-	y.distance(x);
-	a.setPointCloud();
+	y.distance(u);
+	cout << endl;
+	cout << endl << "pointcloud'in setPoint ile noktalari\n";
+	a.setPointCloud(1,2,3);
 	a.getPointCloud();
+	cout << endl << "aptALOCKLAYVYE";
+	b = a;
+	b.getPointCloud();
+	c.setPointCloud(3, 4, 5);
+	b + c;
 }
