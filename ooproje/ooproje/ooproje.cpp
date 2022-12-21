@@ -101,7 +101,8 @@ private:
 	double transMatrix[4][4];
 public:
 	Transform(double trans[3], double angles[3]) {
-
+		;
+		
 	}
 	//set/get functions...
 	void setRotation(double ang[]);
