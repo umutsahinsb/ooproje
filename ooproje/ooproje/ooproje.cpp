@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <fstream>
 #include <math.h>
 using namespace std;
 
@@ -54,11 +56,9 @@ public:
 class PointCloud :public Point {
 	friend ostream& operator<<(ostream& o, const PointCloud& vect);
 	friend istream& operator>>(istream& in, PointCloud& vect);
-private:
+public:
 	Point* points;
 	int pointNumber = 0;
-public:
-
 	PointCloud(int pointNumber) {			//	umut
 		this->points = points;
 		points = new Point[pointNumber];
@@ -137,9 +137,56 @@ class DepthCamera : public PointCloud {
 private:
 	string fileName;
 public:
-	DepthCamera();
+	DepthCamera() {
+		fileName = "cam1.txt";
+	}
 	//set/get functions...
-	PointCloud capture();
+	PointCloud capture() {
+		PointCloud* readPoints;
+		PointCloud d;
+		Point s;
+		string arr[6];
+		int numLines = 0, p = 0, i = 0;
+		ifstream file;
+		file.open(fileName);
+		string linectr;
+		while (getline(file, linectr)) {
+			++numLines;
+		}
+		readPoints = new PointCloud[numLines];
+		readPoints->pointNumber = 3;
+		readPoints->points = nullptr;
+		file.close();
+		file.open(fileName);
+		int sayac = 1;
+		while (getline(file, linectr)) {
+			stringstream iss(linectr);
+			stringstream abb(linectr);
+			string k = linectr;
+			while (iss >> linectr) {
+				p++;
+			}
+			if (p % 6 == 0) {
+				while (abb >> k) {
+					arr[i] += k;
+					i++;
+				}
+				readPoints->x = stod(arr[0]);
+				readPoints->y = stod(arr[1]);
+				readPoints->z = stod(arr[2]);
+
+				i = 0;
+				for (int k = 0; k < 6; k++) {
+					arr[k] = " ";
+				}
+
+			}
+
+			cout << sayac << "\t" << "x degeri: " << readPoints->x << "\ty degeri: " << readPoints->y << "\tz degeri: " << readPoints->z << endl;
+			sayac++;
+		}
+		return *readPoints;
+	}
 };
 
 class ThreeDGridMap : public PointCloud {  // 3DGridMap þeklinde yazýnca hata veriyordu ThreeD yazdým
@@ -165,6 +212,7 @@ int main() {
 	PointCloud b(3);
 	PointCloud c(3);
 	PointCloud d(3);
+	DepthCamera s;
 	u.setPoints(3,4,5);
 	y.setPoints(6,7,8);
 	cout << "x'in setPoint noktalari:\n"; u.getPoints();
@@ -184,25 +232,5 @@ int main() {
 	b.getPointCloud();
 	c.setPointCloud(3, 4, 5);
 	b + c;
-
-	double ang[3], tr[3];
-	Transform tmp(ang, tr);
-
-	tmp.setRotation(ang);
-	tmp.setTranslation(tr);
-
-	for (int i = 0; i < 3; i++)
-	{
-		cout << ang[i] << " ";
-	}
-
-	cout << endl;
-
-	for (int i = 0; i < 3; i++)
-	{
-		cout << tr[i] << " ";
-	}
-
-
-	return 0;
+	s.capture();
 }
