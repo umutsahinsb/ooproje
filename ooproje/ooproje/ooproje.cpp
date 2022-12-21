@@ -9,6 +9,7 @@ using namespace std;
 /*iplikci nedim gibi yorum yazin lutfen, turkce harf kullanmayin github bozuyor tsk.*/
 ///////						ONEMLI				////////
 
+// point ok
 class Point {
 public:
 	double x = 0, y = 0, z = 0;
@@ -53,6 +54,7 @@ public:
 
 };
 
+// pointcloud ok
 class PointCloud :public Point {
 	friend ostream& operator<<(ostream& o, const PointCloud& vect);
 	friend istream& operator>>(istream& in, PointCloud& vect);
@@ -124,15 +126,24 @@ public:
 	PointCloud doTransform(PointCloud pc);
 };
 
+// recorder ok
 class PointCloudRecorder :public PointCloud {
 private:
 	string fileName;
 public:
-	PointCloudRecorder();
+	PointCloudRecorder() {
+		fileName = "record.txt";
+	}
 	//set/get functions...
-	bool save(const PointCloud& pc);
-};
+	bool save(const PointCloud& pc) {
+		ofstream file;
+		file.open(fileName);
+		file << pc.points->x << " " << pc.points->y << " " << pc.points->z;
+		return 1;
+	}
+};	
 
+// depth ok
 class DepthCamera : public PointCloud {
 private:
 	string fileName;
@@ -189,6 +200,7 @@ public:
 	}
 };
 
+
 class ThreeDGridMap : public PointCloud {  // 3DGridMap þeklinde yazýnca hata veriyordu ThreeD yazdým
 private:
 	 // burayý yapamadým
@@ -213,6 +225,7 @@ int main() {
 	PointCloud c(3);
 	PointCloud d(3);
 	DepthCamera s;
+	PointCloudRecorder ff;
 	u.setPoints(3,4,5);
 	y.setPoints(6,7,8);
 	cout << "x'in setPoint noktalari:\n"; u.getPoints();
@@ -232,5 +245,5 @@ int main() {
 	b.getPointCloud();
 	c.setPointCloud(3, 4, 5);
 	b + c;
-	s.capture();
+	ff.save(c);
 }
