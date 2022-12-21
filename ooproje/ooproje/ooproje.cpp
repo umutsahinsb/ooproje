@@ -56,8 +56,6 @@ public:
 
 // pointcloud ok
 class PointCloud :public Point {
-	friend ostream& operator<<(ostream& o, const PointCloud& vect);
-	friend istream& operator>>(istream& in, PointCloud& vect);
 public:
 	Point* points;
 	int pointNumber = 0;
@@ -203,15 +201,36 @@ public:
 
 class ThreeDGridMap : public PointCloud {  // 3DGridMap þeklinde yazýnca hata veriyordu ThreeD yazdým
 private:
-	 // burayý yapamadým
+	bool map[10][10][10];
 	float gridSize;
 	int depth;
 public:
-	ThreeDGridMap();
+	ThreeDGridMap() {
+		map[9][10][10] = this->map;
+		depth = 1;
+		gridSize = 7;
+	}
 	//set/get functions...
-	void insertPointCloud(PointCloud& pc);
-	void insertPoint(Point& p);
-	bool getGrid(int x, int y, int z) const;
+	void insertPointCloud(PointCloud& pc) {
+		int xctr=0, yctr=0, zctr=0;
+		while (pc.points->x > 7) {
+			pc.points->x -= 7;
+			xctr++;
+		}
+		int xpoint, ypoint, zpoint;
+		xpoint = xctr * pc.points->x;
+		map[9][9][xpoint] = true;
+	}
+	void insertPoint(Point& p) {
+		depth *= (p.x * p.y * p.z);
+		cout << depth << endl;
+	}
+	bool getGrid(int x, int y, int z) {
+		if (x * y * z <= gridSize ^ 3) {
+			map[0][0][0] = { true };
+		}
+		return 1;
+	}
 	bool loadMap(string fileName); // fonk. içindeki fileName'in türü belli deðildi böyle yaptým
 	bool saveMap(string fileName); // bir üstteki fonk. ile ayný durum mevcut
 };
@@ -226,6 +245,7 @@ int main() {
 	PointCloud d(3);
 	DepthCamera s;
 	PointCloudRecorder ff;
+	ThreeDGridMap ab;
 	u.setPoints(3,4,5);
 	y.setPoints(6,7,8);
 	cout << "x'in setPoint noktalari:\n"; u.getPoints();
@@ -245,5 +265,8 @@ int main() {
 	b.getPointCloud();
 	c.setPointCloud(3, 4, 5);
 	b + c;
-	ff.save(c);
+	ab.insertPointCloud(a);
+	ab.insertPointCloud(c);
+	ab.insertPoint(u);
+	ab.getGrid(3,4,5);
 }
