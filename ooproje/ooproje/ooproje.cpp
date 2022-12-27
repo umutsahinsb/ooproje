@@ -3,6 +3,9 @@
 #include <sstream>
 #include <fstream>
 #include <math.h>
+#include <iterator>
+#include <list>
+#define PI 3,14
 using namespace std;
 
 ///////						ONEMLI				////////
@@ -56,33 +59,75 @@ public:
 
 // pointcloud ok
 class PointCloud :public Point {
-public:
-	Point* points;
+public:	
+	list <PointCloud> points;
 	int pointNumber = 0;
 	PointCloud(int pointNumber) {			//	umut
-		this->points = points;
-		points = new Point[pointNumber];
+		this->pointNumber = pointNumber;
 	}
 	// inheritance kullandigimiz icin default constructor hatasi
 	// aliyoruz. bundan kurtulmak icin boyle yaziyorum.					// umut
 	PointCloud(){}
 
-	Point* setPointCloud(double x,double y,double z) {
-		points->setPoints(x,y,z);
+	list<PointCloud> setPointCloud(double x,double y,double z) {
+		points.clear();
+		points.push_back(x);
+		points.push_back(y);
+		points.push_back(z);
+		this->x = x;
+		this->y = y;
+		this->z = z;
 		return points;
 	}
-	Point* getPointCloud() {
-		points->getPoints();
+	list<PointCloud> setPointCloud(double x, double y, double z,double x1,double y1, double z1) {
+		points.clear();
+		Point p1, p2;
+		points.push_back(x);
+		points.push_back(y);
+		points.push_back(z);
+		points.push_back(x1);
+		points.push_back(y1);
+		points.push_back(z1);
+		p1.setPoints(x, y, z);
+		p2.setPoints(x1, y1, z1);
 		return points;
+
+	}
+	void getPointCloud() {
+		if (this->pointNumber == 3) {
+			cout << "x: " << points.front();
+			points.pop_front();
+			cout << "y: " << points.front();
+			points.pop_front();
+			cout << "z: " << points.front();
+			points.pop_front();
+		}
+		else {
+			cout << "x: " << points.front();
+			points.pop_front();
+			cout << "y: " << points.front();
+			points.pop_front();
+			cout << "z: " << points.front();
+			points.pop_front();
+			cout << "   " << points.front();
+			points.pop_front();
+			cout << "   " << points.front();
+			points.pop_front();
+			cout << "   " << points.front();
+			points.pop_front();
+		}
+	}
+	void getPointCloud1() {
+
+
 	}
 	PointCloud operator+(PointCloud &a) {
-		PointCloud toplam(3);
-		toplam.points->x = a.points->x + this->points->x;
-		toplam.points->y = a.points->y + this->points->y;
-		toplam.points->z = a.points->z + this->points->z;
+		PointCloud npc(6);
+		npc.setPointCloud(this->x, this->y, this->z, a.x, a.y, a.z);
 		cout << "\nIki nokta bulutunun toplami:\n";
-		cout << "yeni x: " << toplam.points->x << "\tyeni y: " << toplam.points->y << "\tyeni z: " << toplam.points->z << endl;
-		return toplam;
+
+		
+		return npc;
 	}
 	Point operator=(Point &a) {
 		Point kopya;
@@ -92,6 +137,11 @@ public:
 		return kopya;
 	}
 };
+ostream& operator<<(ostream& os, const Point& dt)
+{
+	os << dt.x << '/' << dt.y << '/' << dt.z;
+	return os;
+}
 
 
 class Transform :public PointCloud {
@@ -100,28 +150,38 @@ private:
 	double trans[3];
 	double transMatrix[4][4];
 public:
-	Transform(double trans[3], double angles[3]) {
-		
+	Transform(string name)
+	{
+		if (name == "cam.txt")
+		{
+			double cam1transMatrix[4][4] =
+			{ {-0.7076050, 0.0065031, -0.7065783, 1.95704},
+			  { 0.7066082, 0.0065134, -0.7075750, 1.93000},
+			  { 0.0000008,-0.9999576, -0.0092041, 1.05707},
+			  {0,         0,          0,         1}
+			};
+			memcpy(transMatrix, cam1transMatrix, sizeof(transMatrix));
+		}
+
 	}
+	Transform(double trans[3], double angles[3]) {
+		setTranslation(trans);
+		setRotation(angles);
+	}
+	~Transform()
+	{
+
+	}
+
 	//set/get functions...
 	void setRotation(double ang[]) {
 		for (int i = 0; i < 3; i++)
-		{
-			int a;
-			cin >> a;
-			ang[i] = a;
-		}
+			angles[i] = ang[i] * (PI / 180);
 	}
 	void setTranslation(double tr[]) {
 		for (int i = 0; i < 3; i++)
-		{
-			int a;
-			cin >> a;
-			tr[i] = a;
-		}
+			trans[i] = tr[i];
 	}
-	Point doTransform(Point p);
-	PointCloud doTransform(PointCloud pc);
 };
 
 // recorder ok
@@ -136,7 +196,7 @@ public:
 	bool save(const PointCloud& pc) {
 		ofstream file;
 		file.open(fileName);
-		file << pc.points->x << " " << pc.points->y << " " << pc.points->z;
+		file << pc.x << " " << pc.y << " " << pc.z;
 		return 1;
 	}
 };	
@@ -201,35 +261,91 @@ public:
 
 class ThreeDGridMap : public PointCloud {  // 3DGridMap þeklinde yazýnca hata veriyordu ThreeD yazdým
 private:
-	bool map[10][10][10];
+	bool map[50][50][50] = { false };
 	float gridSize;
 	int depth;
 public:
 	ThreeDGridMap() {
-		map[9][10][10] = this->map;
+		map[49][49][49] = this->map;
 		depth = 1;
-		gridSize = 7;
+		gridSize = 1;
 	}
 	//set/get functions...
 	void insertPointCloud(PointCloud& pc) {
-		int xctr=0, yctr=0, zctr=0;
-		while (pc.points->x > 7) {
-			pc.points->x -= 7;
+		int xctr=1, yctr=1, zctr=1;
+		while (float(pc.points.front()) > gridSize) {
+			pc.points->x -= gridSize;
 			xctr++;
 		}
+		while (pc.points->y > gridSize) {
+			pc.points->y -= gridSize;
+			yctr++;
+		}
+		while (pc.points->z > gridSize) {
+			pc.points->z -= gridSize;
+			zctr++;
+		}
 		int xpoint, ypoint, zpoint;
-		xpoint = xctr * pc.points->x;
-		map[9][9][xpoint] = true;
+		xpoint = xctr * points[0];
+		ypoint = yctr * pc.points->y;
+		zpoint = zctr * pc.points->z;
+		if (depth < xpoint * ypoint * zpoint) {
+			depth = xpoint * ypoint * zpoint;
+			cout << "depth: " << depth << endl;
+		}
+		if (depth >= xpoint * ypoint * zpoint) {
+
+		}
+		if (map[xpoint - 1][ypoint - 1][zpoint - 1] = true) {
+			
+		}
+		else {
+			map[xpoint - 1][ypoint - 1][zpoint - 1] = true;
+		}
+		
+
 	}
 	void insertPoint(Point& p) {
-		depth *= (p.x * p.y * p.z);
-		cout << depth << endl;
+		int xctr = 1, yctr =1, zctr = 1;
+		while (p.x > gridSize) {
+			p.x -= gridSize;
+			xctr++;
+		}
+		while (p.y > gridSize) {
+			p.y -= gridSize;
+			yctr++;
+		}
+		while (p.z > gridSize) {
+			p.z -= gridSize;
+			zctr++;
+		}
+		int xpoint, ypoint, zpoint;
+		xpoint = xctr * p.x;
+		ypoint = yctr * p.y;
+		zpoint = zctr * p.z;
+		if (depth < xpoint * ypoint * zpoint) {
+			depth = xpoint * ypoint * zpoint;
+			cout << "depth: " << depth << endl;
+		}
+		if (depth >= xpoint * ypoint * zpoint) {
+
+		}
+		if (map[xpoint - 1][ypoint - 1][zpoint - 1] = true) {
+
+		}
+		else {
+			map[xpoint - 1][ypoint - 1][zpoint - 1] = true;
+		}
 	}
 	bool getGrid(int x, int y, int z) {
-		if (x * y * z <= gridSize ^ 3) {
-			map[0][0][0] = { true };
+		if(map[x-1][y-1][z-1] == true){
+			cout << "kup dolu.\n";
+			return true;
 		}
-		return 1;
+		else {
+			cout << "kup bos.\n";
+			return false;
+		}
 	}
 	bool loadMap(string fileName); // fonk. içindeki fileName'in türü belli deðildi böyle yaptým
 	bool saveMap(string fileName); // bir üstteki fonk. ile ayný durum mevcut
@@ -265,8 +381,6 @@ int main() {
 	b.getPointCloud();
 	c.setPointCloud(3, 4, 5);
 	b + c;
-	ab.insertPointCloud(a);
 	ab.insertPointCloud(c);
 	ab.insertPoint(u);
-	ab.getGrid(3,4,5);
 }
