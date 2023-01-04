@@ -6,6 +6,6 @@ private:
 	Transform transform;
 public:
 	PointCloudGenerator();
-	PointCloud capture();
-	PointCloud captureFor();
+	virtual PointCloud capture() = 0;
+	virtual PointCloud captureFor() = 0;
 };
